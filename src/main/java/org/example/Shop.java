@@ -1,9 +1,11 @@
 package org.example;
 import java.util.Locale;
 
+import org.example.input.ConsoleInput;
 import org.example.interfaces.ICustomerManager;
 import org.example.interfaces.IProductManager;
 import org.example.interfaces.IPurchaseManager;
+import org.example.interfaces.Input;
 import org.example.manageClasses.CustomerManager;
 import org.example.manageClasses.ProductManager;
 import org.example.manageClasses.PurchaseManager;
@@ -19,18 +21,19 @@ public class Shop {
     private IProductManager productManager;
     private ICustomerManager customerManager;
     private IPurchaseManager purchaseManager;
-    private Scanner scanner;
-    private InputValidator inputValidator;
 
+    private InputValidator inputValidator;
+    private Input input;
     private PurchaseFileSaver purchaseFileSaver;
 
     public Shop() {
         this.productManager = new ProductManager();
         this.customerManager = new CustomerManager();
         this.purchaseManager = new PurchaseManager(productManager, customerManager);
-        this.scanner = new Scanner(System.in).useLocale(Locale.US);
+
         this.purchaseFileSaver = new PurchaseFileSaver();
-        this.inputValidator = new InputValidator(scanner);
+        this.input = new ConsoleInput();
+        this.inputValidator = new InputValidator(input);
 
         // Добавляем начальные данные
         initializeProducts();
@@ -74,8 +77,8 @@ public class Shop {
             System.out.println("8. Покупка продукта");
             System.out.println("9. Выход");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine();  // Чтение новой строки после nextInt
+            int choice = input.nextInt();
+            input.nextLine();  // Чтение новой строки после nextInt
 
             switch (choice) {
                 case 1 -> addProduct();
@@ -127,7 +130,7 @@ public class Shop {
         System.out.println("Список продуктов перед изменением:");
         showAllProducts();
 
-        int productId = inputValidator.getValidIntInput("Введите ID продукта для обновления: ");
+        int productId = inputValidator.getValidExistingProductId("Введите ID продукта для обновления: ",productManager.getAllProducts());
 
         String name = inputValidator.getValidTextInput("Введите новое название продукта: ");
 
@@ -201,7 +204,6 @@ public class Shop {
         System.out.println("Обновленный список покупателей");
         showAllCustomers();
     }
-
 
 
 

@@ -3,40 +3,40 @@ package org.example;
 import java.util.List;
 import java.util.Scanner;
 
+import org.example.interfaces.Input;
 import org.example.model.Customer;
 import org.example.model.Product;
 
 public class InputValidator {
 
-    private final Scanner scanner;
+    private final Input input;
 
-    public InputValidator(Scanner scanner) {
-        this.scanner = scanner;
+    public InputValidator( Input input ) {
+        this.input = input;
     }
+
     public String getValidTextInput(String promptMessage) {
-        String input = null;
-        while (input==null||input.trim().isEmpty()) {
+        String user_input = "";
+        while (true) {
             System.out.print(promptMessage);
-            input = scanner.nextLine().trim();
-            if (input.isEmpty()) {
+            user_input = input.nextLine().trim();
+            if (user_input.isEmpty()) {
                 System.out.println("Ошибка: ввод не может быть пустым.");
             }
-
-            // Проверка: текст не должен состоять только из цифр и должен содержать хотя бы одну букву
-            if (input.matches("[a-zA-Zа-яА-ЯёЁ\\s]+")) {
+            else if (user_input.matches("[a-zA-Zа-яА-ЯёЁ\\s]+")) {
                 break;
             } else {
                 System.out.println("Ошибка! Ввод не должен быть числом. Пожалуйста, введите текст заново.");
             }
         }
-        return input != null ? input : "";
+        return user_input;
     }
 
     public double getValidPositivePrice(String promptMessage) {
         double price;
         while (true) {
             price = getValidDoubleInput(promptMessage);
-            if (price > 0) {
+            if (price >= 0) {
                 break; // Valid price
             } else {
                 System.out.println("Ошибка: цена не может быть отрицательной или нулевой. Введите положительное число.");
@@ -63,35 +63,41 @@ public class InputValidator {
 
 
     public double getValidDoubleInput(String promptMessage) {
-        double input;
+        double user_input;
         while (true) {
             System.out.print(promptMessage);
-            if (scanner.hasNextDouble()) {
-                input = scanner.nextDouble();
-                scanner.nextLine(); // Очистка новой строки из буфера
+            try {
+                user_input = input.nextDouble();
+                input.nextLine();
                 break;
-            } else {
+            }catch (Exception e) {
                 System.out.println("Ошибка! Введите  число.");
-                scanner.nextLine(); // Очистка некорректного ввода
+                input.nextLine();
+                // Очистка некорректного ввода
             }
         }
-        return input;
+        return user_input;
     }
 
     public int getValidIntInput(String promptMessage) {
-        int input;
+        int user_input;
         while (true) {
             System.out.print(promptMessage);
-            if (scanner.hasNextInt()) {
-                input = scanner.nextInt();
-                scanner.nextLine(); // Очистка новой строки из буфера
+            try{
+                user_input = input.nextInt();
+                input.nextLine();
                 break;
-            } else {
+            }catch (Exception e) {
                 System.out.println("Ошибка! Введите корректное целое число.");
-                scanner.nextLine(); // Очистка некорректного ввода
+                input.nextLine();
+
             }
+
+
+                // Очистка некорректного ввода
+
         }
-        return input;
+        return user_input;
     }
 
 
